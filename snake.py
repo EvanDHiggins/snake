@@ -155,18 +155,15 @@ def gameLoop():
                     addLink(snake)
 
         # --- Game logic goes here ---
-        if renderSkip == renderFPS:
-            numberOfFood = updateGame(snake, food, numberOfFood)
-            renderSkip = 0
-        else:
-            renderSkip += 1
+        numberOfFood = updateGame(snake, food, numberOfFood)
         
 
         # Overwrite Screen White
         screen.fill(WHITE)
 
-                # --- Render here ---
+        # --- Render here ---
         render(food, snake, screen)
+
         # Update Display
         pygame.display.flip()
 

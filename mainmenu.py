@@ -1,4 +1,5 @@
 import pygame
+from snake import Snake
 
 pygame.init()
 
@@ -51,6 +52,8 @@ class GenericMenu:
         # ---Initialize Pygame Features---
         self.clock = pygame.time.Clock()
 
+        self.listLength = len(menuItems)
+
         self.screen = screen
         self.width = screen.get_rect().width
         self.height = screen.get_rect().height
@@ -64,7 +67,8 @@ class GenericMenu:
             xPos = self.menuList[index].xPos
             yPos = self.menuList[index].yPos
             xPos = self.width/2 - self.menuList[index].width/2
-            yPos = (index + 1) * 40
+            yPos = (index + 1) * (self.height/(self.listLength + 1))
+            yPos -= self.menuList[index].height/2
             self.menuList[index].setPosition(xPos, yPos)
 
 
@@ -78,6 +82,10 @@ class GenericMenu:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     done = True
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    for item in self.menuList:
+                        if item.isMouseSelection(pygame.mouse.get_pos()):
+                            return item.text
 
             self.screen.fill(self.backgroundColor)
             for item in self.menuList:
@@ -88,6 +96,7 @@ class GenericMenu:
                 self.screen.blit(item.label, (item.xPos, item.yPos))
 
             pygame.display.flip()
+
 
 if __name__ == "__main__":
     screen = pygame.display.set_mode((200, 175), 0, 32)

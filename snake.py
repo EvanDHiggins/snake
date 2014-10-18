@@ -11,186 +11,209 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (200, 0, 0)
 
-LINK_SIZE = 6
-LINK_SPACING = 4
-SCREEN_WIDTH = 236
-SCREEN_HEIGHT = 236
+#self.linkSize = 6
+#self.linkSpacing = 4
+#self.screenWidth = 236
+#self.screenHeight = 236
 
-def gameLoop():
-    size = SCREEN_WIDTH, SCREEN_HEIGHT
-    screen = pygame.display.set_mode(size)
+class Snake():
+    def __init__(self, screen):
 
-    #End of Loop Boolean
-    done = False
+        # ---Initialize Pygame Functionality---
+        self.clock = pygame.time.Clock()
 
-    clock = pygame.time.Clock()
+        # ---Initialize Dimensions---
+        self.screen = screen
+        self.screenHeight = screen.get_rect().height
+        self.screenWidth = screen.get_rect().width
+        self.linkSize = 6
+        self.linkSpacing = 4
 
-    #Initialize Game Loop Variables
-    snake = initializeSnake()
-    numberOfFood = 0
-    food = []
+        self.acceptingMoves = True
 
-    while not done:
-        #Elif statement for command interrupts
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                done = True
+        self.done = False
 
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    if isLegalMove(snake[0], 'u'):
-                        snake[0].setDirection('u')
+    def gameLoop(self):
 
-                elif event.key == pygame.K_DOWN:
-                    if isLegalMove(snake[0], 'd'):
-                        snake[0].setDirection('d')
+        #End of Loop Boolean
 
-                elif event.key == pygame.K_LEFT:
-                    if isLegalMove(snake[0], 'l'):
-                        snake[0].setDirection('l')
+        #Initialize Game Loop Variables
+        snake = self.initializeSnake()
+        numberOfFood = 0
+        food = []
 
-                elif event.key == pygame.K_RIGHT:
-                    if isLegalMove(snake[0], 'r'):
-                        snake[0].setDirection('r')
+        while not self.done:
+            #Elif statement for command interrupts
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.done = True
 
-                elif event.key == pygame.K_SPACE:
-                    addLink(snake)
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        if (self.isLegalMove(snake[0], 'u') and \
+                                self.acceptingMoves == True):
+                            snake[0].setDirection('u')
+                            self.acceptingMoves = False
 
-        # --- Game logic goes here ---
-        numberOfFood = updateGame(snake, food, numberOfFood)
-        
+                    elif event.key == pygame.K_DOWN:
+                        if (self.isLegalMove(snake[0], 'd') and \
+                                self.acceptingMoves == True):
+                            snake[0].setDirection('d')
+                            self.acceptingMoves = False
 
-        # Overwrite Screen White
-        screen.fill(WHITE)
+                    elif event.key == pygame.K_LEFT:
+                        if (self.isLegalMove(snake[0], 'l') and \
+                                self.acceptingMoves == True):
+                            snake[0].setDirection('l')
+                            self.acceptingMoves = False
 
-        # --- Render here ---
-        render(food, snake, screen)
+                    elif event.key == pygame.K_RIGHT:
+                        if (self.isLegalMove(snake[0], 'r') and \
+                                self.acceptingMoves == True):
+                            snake[0].setDirection('r')
+                            self.acceptingMoves = False
 
-        # Update Display
-        pygame.display.flip()
+                    elif event.key == pygame.K_SPACE:
+                        self.addLink(snake)
 
-        #Limit FPS
-        clock.tick(15)
+            # --- Game logic goes here ---
+            numberOfFood = self.updateGame(snake, food, numberOfFood)
+            
 
-    pygame.quit()
+            # Overwrite Screen White
+            self.screen.fill(WHITE)
 
-def addLink(oldSnake):
-    """Adds a link to the end of the snake directly behind the last link"""
+            # --- Render here ---
+            self.render(food, snake, self.screen)
 
-    #The final link of the snake in order to derive
-    # the next link's location and direction
-    finalLink = oldSnake[len(oldSnake) - 1]
-    newdirection = finalLink.getDirection()
-    newX, newY = finalLink.getOffset()
+            # Update Display
+            pygame.display.flip()
 
-    oldSnake.append(snakeLink(newdirection, newX, newY,
-                                LINK_SIZE, LINK_SPACING))
+            #Limit FPS
+            self.clock.tick(15)
 
-def initializeSnake():
-    snake = []
-    #Create initial head link at arbitrarily chosen position
-    snake.append(snakeLink('r', 50, 100, LINK_SIZE, LINK_SPACING))
+        return
 
-    #Create 4 additional links behind head
-    for i in range(4):
-        addLink(snake)
-    return snake
+    def addLink(self, oldSnake):
+        """Adds a link to the end of the snake directly behind the last link"""
 
-def nextMoves(snake):
-    """Shifts moves down the snake"""
-    tempSnake = snake[:]
-    tempSnake.reverse()
-    for link in range(0, len(tempSnake) - 1):
-        tempSnake[link].setDirection(tempSnake[link+1].getDirection())
-    return snake
+        #The final link of the snake in order to derive
+        # the next link's location and direction
+        finalLink = oldSnake[len(oldSnake) - 1]
+        newdirection = finalLink.getDirection()
+        newX, newY = finalLink.getOffset()
 
-def isLegalMove(head, move):
-    direction = head.getDirection()
-    if direction == 'r' or direction == 'l':
-        if move == 'r' or move == 'l':
-            return False
+        oldSnake.append(snakeLink(newdirection, newX, newY,
+                                    self.linkSize, self.linkSpacing))
+
+    def initializeSnake(self):
+        snake = []
+        #Create initial head link at arbitrarily chosen position
+        snake.append(snakeLink('r', 50, 100, self.linkSize, self.linkSpacing))
+
+        #Create 4 additional links behind head
+        for i in range(4):
+            self.addLink(snake)
+        return snake
+
+    def nextMoves(self, snake):
+        """Shifts moves down the snake"""
+        tempSnake = snake[:]
+        tempSnake.reverse()
+        for link in range(0, len(tempSnake) - 1):
+            tempSnake[link].setDirection(tempSnake[link+1].getDirection())
+        self.acceptingMoves = True
+        return snake
+
+    def isLegalMove(self, head, move):
+        direction = head.getDirection()
+        if direction == 'r' or direction == 'l':
+            if move == 'r' or move == 'l':
+                return False
+            else:
+                return True
         else:
-            return True
-    else:
-        if move == 'u' or move == 'd':
-            return False
-        else:
-            return True
+            if move == 'u' or move == 'd':
+                return False
+            else:
+                return True
 
-def collision(snake, food = []):
-    """Returns the title of the thing that the snake is colliding with
+    def collision(self, snake, food = []):
+        """Returns the title of the thing that the snake is colliding with
 
-    :snake: snake array
-    :returns: String of object the snake has collided with
+        :snake: snake array
+        :returns: String of object the snake has collided with
 
-    """
-    headXPos = snake[0].getXPosition()
-    headYPos = snake[0].getYPosition()
+        """
+        headXPos = snake[0].getXPosition()
+        headYPos = snake[0].getYPosition()
 
-    #Skips head in order to avoid comparing head position with itself
-    #when determining collision with self
-    for link in itertools.islice(snake, 1, len(snake) - 1):
-        linkXPos = link.getXPosition()
-        linkYPos = link.getYPosition()
-        if linkXPos == headXPos and linkYPos == headYPos:
-            return "self"
-    if headXPos >= SCREEN_WIDTH or headXPos < 0:
-        return "wall"
-    elif headYPos >= SCREEN_HEIGHT or headYPos < 0:
-        return "wall"
+        #Skips head in order to avoid comparing head position with itself
+        #when determining collision with self
+        for link in itertools.islice(snake, 1, len(snake) - 1):
+            linkXPos = link.getXPosition()
+            linkYPos = link.getYPosition()
+            if linkXPos == headXPos and linkYPos == headYPos:
+                return "self"
+        if headXPos >= self.screenWidth or headXPos < 0:
+            return "wall"
+        elif headYPos >= self.screenHeight or headYPos < 0:
+            return "wall"
 
-    for piece in food:
-        if(piece.getXPosition() == headXPos
-            and piece.getYPosition() == headYPos):
-            food.remove(piece)
-            return "food"
+        for piece in food:
+            if(piece.getXPosition() == headXPos
+                and piece.getYPosition() == headYPos):
+                food.remove(piece)
+                return "food"
 
-def addFood(food):
-    """Generates random position for piece of food
+    def addFood(self, food):
+        """Generates random position for piece of food
 
-    food: array of food pieces
-    returns: void
+        food: array of food pieces
+        returns: void
 
-    """
-    xPos = random.randrange(0, SCREEN_WIDTH)
-    xPos = xPos - (xPos % (LINK_SIZE + LINK_SPACING))
-    yPos = random.randrange(0, SCREEN_HEIGHT)
-    yPos = yPos - (yPos % (LINK_SIZE + LINK_SPACING))
-    food.append(FoodPiece(xPos, yPos))
+        """
+        xPos = random.randrange(0, self.screenWidth)
+        xPos = xPos - (xPos % (self.linkSize + self.linkSpacing))
+        yPos = random.randrange(0, self.screenHeight)
+        yPos = yPos - (yPos % (self.linkSize + self.linkSpacing))
+        food.append(FoodPiece(xPos, yPos))
 
-def updateGame(snake, food, numberOfFood):
-    #Advances the position of each link in the snake
-    for link in snake:
-        link.moveLink()
+    def updateGame(self, snake, food, numberOfFood):
+        #Advances the position of each link in the snake
+        for link in snake:
+            link.moveLink()
 
-    #the item that the snake has collided with
-    collisionItem = collision(snake, food)
-    if collisionItem == "food":
-        addLink(snake)
-        numberOfFood -= 1
-    elif collisionItem == "self":
-        quit()
-    elif collisionItem == "wall":
-        quit()
+        #the item that the snake has collided with
+        collisionItem = self.collision(snake, food)
+        if collisionItem == "food":
+            self.addLink(snake)
+            numberOfFood -= 1
+        elif collisionItem == "self":
+            self.done = True
+        elif collisionItem == "wall":
+            self.done = True
 
-    if numberOfFood < 3:
-        addFood(food)
-        numberOfFood += 1
+        if numberOfFood < 3:
+            self.addFood(food)
+            numberOfFood += 1
 
-    snake = nextMoves(snake)
-    return numberOfFood
+        snake = self.nextMoves(snake)
+        return numberOfFood
 
-def render(food, snake, screen):
-    for piece in food:
-        pygame.draw.rect(screen, RED, [piece.getXPosition() + 1,
-            piece.getYPosition() + 1, 4, 4])
-    for link in snake:
-        pygame.draw.rect(screen, BLACK, [link.getXPosition(),
-                    link.getYPosition(), LINK_SIZE, LINK_SIZE])
+    def render(self, food, snake, screen):
+        for piece in food:
+            pygame.draw.rect(screen, RED, [piece.getXPosition() + 1,
+                piece.getYPosition() + 1, 4, 4])
+        for link in snake:
+            pygame.draw.rect(screen, BLACK, [link.getXPosition(),
+                        link.getYPosition(), self.linkSize, self.linkSize])
 
 
 def main():
-    gameLoop()
+    screen = pygame.display.set_mode((500, 500))
+    snakeGame = Snake(screen)
+    snakeGame.gameLoop()
 
 if __name__ == "__main__":
     main()

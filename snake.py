@@ -21,6 +21,7 @@ class Snake():
 
         # ---Initialize Pygame Functionality---
         self.clock = pygame.time.Clock()
+        pygame.mouse.set_visible(False)
 
         # ---Initialize Dimensions---
         self.screen = screen
@@ -29,13 +30,16 @@ class Snake():
         self.linkSize = 6
         self.linkSpacing = 4
 
+        self.score = 0
+
+        # If True, pressing an arrow key will affect the snakes position
+        #, if False, it will not.  This prevents fast key strokes killing
+        # the snake
         self.acceptingMoves = True
 
         self.done = False
 
     def gameLoop(self):
-
-        #End of Loop Boolean
 
         #Initialize Game Loop Variables
         snake = self.initializeSnake()
@@ -48,6 +52,7 @@ class Snake():
                 if event.type == pygame.QUIT:
                     self.done = True
 
+                # Snake Movement Handlers
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
                         if (self.isLegalMove(snake[0], 'u') and \
@@ -92,7 +97,8 @@ class Snake():
             #Limit FPS
             self.clock.tick(15)
 
-        return
+        pygame.mouse.set_visible(True)
+        return self.score
 
     def addLink(self, oldSnake):
         """Adds a link to the end of the snake directly behind the last link"""

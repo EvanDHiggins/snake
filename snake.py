@@ -1,7 +1,8 @@
 import sys, pygame
 import itertools
 import random
-from snakeLink import snakeLink
+from lib.snakeLink import snakeLink
+from lib.foodpiece import FoodPiece
 
 pygame.init()
 
@@ -15,17 +16,63 @@ LINK_SPACING = 4
 SCREEN_WIDTH = 236
 SCREEN_HEIGHT = 236
 
-class foodPiece:
-    def __init__(self, xPos, yPos):
-        self.xPos = xPos
-        self.yPos = yPos
+def gameLoop():
+    size = SCREEN_WIDTH, SCREEN_HEIGHT
+    screen = pygame.display.set_mode(size)
 
-    def getXPosition(self):
-        return self.xPos
+    #End of Loop Boolean
+    done = False
 
-    def getYPosition(self):
-        return self.yPos
+    clock = pygame.time.Clock()
 
+    #Initialize Game Loop Variables
+    snake = initializeSnake()
+    numberOfFood = 0
+    food = []
+
+    while not done:
+        #Elif statement for command interrupts
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    if isLegalMove(snake[0], 'u'):
+                        snake[0].setDirection('u')
+
+                elif event.key == pygame.K_DOWN:
+                    if isLegalMove(snake[0], 'd'):
+                        snake[0].setDirection('d')
+
+                elif event.key == pygame.K_LEFT:
+                    if isLegalMove(snake[0], 'l'):
+                        snake[0].setDirection('l')
+
+                elif event.key == pygame.K_RIGHT:
+                    if isLegalMove(snake[0], 'r'):
+                        snake[0].setDirection('r')
+
+                elif event.key == pygame.K_SPACE:
+                    addLink(snake)
+
+        # --- Game logic goes here ---
+        numberOfFood = updateGame(snake, food, numberOfFood)
+        
+
+        # Overwrite Screen White
+        screen.fill(WHITE)
+
+        # --- Render here ---
+        render(food, snake, screen)
+
+        # Update Display
+        pygame.display.flip()
+
+        #Limit FPS
+        clock.tick(15)
+
+    pygame.quit()
 
 def addLink(oldSnake):
     """Adds a link to the end of the snake directly behind the last link"""
@@ -109,68 +156,7 @@ def addFood(food):
     xPos = xPos - (xPos % (LINK_SIZE + LINK_SPACING))
     yPos = random.randrange(0, SCREEN_HEIGHT)
     yPos = yPos - (yPos % (LINK_SIZE + LINK_SPACING))
-    food.append(foodPiece(xPos, yPos))
-
-def gameLoop():
-    size = SCREEN_WIDTH, SCREEN_HEIGHT
-    screen = pygame.display.set_mode(size)
-
-    #End of Loop Boolean
-    done = False
-
-    clock = pygame.time.Clock()
-
-    #Initialize Game Loop Variables
-    snake = initializeSnake()
-    numberOfFood = 0
-    food = []
-    renderSkip = 0
-    renderFPS = 15
-
-
-    while not done:
-        #Elif statement for command interrupts
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                done = True
-
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    if isLegalMove(snake[0], 'u'):
-                        snake[0].setDirection('u')
-
-                elif event.key == pygame.K_DOWN:
-                    if isLegalMove(snake[0], 'd'):
-                        snake[0].setDirection('d')
-
-                elif event.key == pygame.K_LEFT:
-                    if isLegalMove(snake[0], 'l'):
-                        snake[0].setDirection('l')
-
-                elif event.key == pygame.K_RIGHT:
-                    if isLegalMove(snake[0], 'r'):
-                        snake[0].setDirection('r')
-
-                elif event.key == pygame.K_SPACE:
-                    addLink(snake)
-
-        # --- Game logic goes here ---
-        numberOfFood = updateGame(snake, food, numberOfFood)
-        
-
-        # Overwrite Screen White
-        screen.fill(WHITE)
-
-        # --- Render here ---
-        render(food, snake, screen)
-
-        # Update Display
-        pygame.display.flip()
-
-        #Limit FPS
-        clock.tick(60)
-
-    pygame.quit()
+    food.append(FoodPiece(xPos, yPos))
 
 def updateGame(snake, food, numberOfFood):
     #Advances the position of each link in the snake

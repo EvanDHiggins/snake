@@ -1,7 +1,9 @@
 import pygame
 import time
+from lib.MenuItem import MenuItem
 from mainmenu import GenericMenu
 from snake import Snake
+from ScoreDisplay import ScoreDisplay
 
 pygame.init()
 
@@ -13,7 +15,7 @@ def main():
     mainMenu = ('Play Game', 'High Scores', 'Settings', 'Quit')
     backgroundColor = (255, 255, 255)
 
-    scoresList = readScoresFromFile()
+    scoresList, userList = readScoresFromFile()
     mainMenu = GenericMenu(screen, mainMenu)
     while(True):
         choice = mainMenu.run()
@@ -23,9 +25,10 @@ def main():
             newScore = snake.gameLoop()
             #scoresList.append(newScore)
         elif choice == 'High Scores':
-            pass 
+            highScores = ScoreDisplay(screen, scoresList, userList)
+            highScores.run()
         elif choice == 'Quit':
-            pygame.quit()
+            break
         choice == ""
 
 def displayCountdown(screen, backgroundColor):
@@ -42,6 +45,21 @@ def displayCountdown(screen, backgroundColor):
         time.sleep(1)
 
 def readScoresFromFile():
-    pass
+    userList = []
+    scoresList = []
+
+    file = open('scores.txt', 'r')
+    for index, line in enumerate(file):
+        if index % 2 == 0:
+            userList.append(line)
+        else:
+            scoresList.append(line)
+    for item in userList:
+        print (item)
+    for item in scoresList:
+        item = "{0:0>5}".format(item)
+        print(item)
+    return scoresList, userList
 
 main()
+pygame.quit()

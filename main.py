@@ -1,5 +1,6 @@
 import pygame
 import time
+import eztext
 from lib.MenuItem import MenuItem
 from mainmenu import GenericMenu
 from snake import Snake
@@ -23,6 +24,7 @@ def main():
             snake = Snake(screen)
             displayCountdown(screen, backgroundColor)
             newScore = snake.gameLoop()
+            getUsername(screen, backgroundColor)
             #scoresList.append(newScore)
         elif choice == 'High Scores':
             highScores = ScoreDisplay(screen, scoresList, userList)
@@ -30,6 +32,29 @@ def main():
         elif choice == 'Quit':
             break
         choice == ""
+
+def getUsername(screen, backgroundColor):
+    done = False
+    clock = pygame.time.Clock()
+    textBox = eztext.Input(color = (0, 0, 0), prompt='High Score!')
+    screen = pygame.display.set_mode((400, 50), 0, 32)
+    while not done:
+        clock.tick(60)
+
+        events = pygame.event.get()
+
+        for event in events:
+            if event.type == pygame.QUIT:
+                return
+
+        screen.fill(backgroundColor)
+
+        textBox.update(events)
+
+        textBox.draw(screen)
+
+        pygame.display.flip()
+
 
 def displayCountdown(screen, backgroundColor):
     for i in xrange(3, 0, -1):

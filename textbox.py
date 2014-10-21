@@ -68,7 +68,7 @@ class TextBox:
            characters: integer of the number of characters long the textbox
                        should be.
         """
-        text = '['
+        text = '[g'
         for char in xrange(characters):
             text += 'm'
         print(text)

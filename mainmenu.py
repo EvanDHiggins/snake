@@ -7,12 +7,14 @@ pygame.init()
 
 class GenericMenu:
     def __init__(self, screen, menuItems, backgroundColor = (255, 255, 255),
-                 font = None, fontSize = 30, fontColor = (0, 0, 0)):
+                 fontName = None, fontSize = 30, fontColor = (0, 0, 0)):
 
         # ---Initialize Pygame Features---
         self.clock = pygame.time.Clock()
 
         self.listLength = len(menuItems)
+
+        self.fontName = fontName
 
         self.screen = screen
         self.width = screen.get_rect().width
@@ -22,8 +24,14 @@ class GenericMenu:
         self.menuList = []
 
         # ---Initialize MenuItems---
-        for index, text in enumerate(menuItems):
+        self.initializeMenuItems()
+
+
+    def initializeMenuItems(self):
+        self.menuList = []
+        for index, text in enumerate(self.menuItems):
             self.menuList.append(MenuItem(text))
+            self.menuList[index].setFont(self.fontName)
             xPos = self.menuList[index].xPos
             yPos = self.menuList[index].yPos
             xPos = self.width/2 - self.menuList[index].width/2
@@ -31,6 +39,9 @@ class GenericMenu:
             yPos -= self.menuList[index].height/2
             self.menuList[index].setPosition(xPos, yPos)
 
+    def setFont(self, fontName):
+        self.fontName = fontName
+        self.initializeMenuItems()
 
     def run(self):
 

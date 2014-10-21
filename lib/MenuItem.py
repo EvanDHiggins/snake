@@ -1,19 +1,21 @@
 import pygame
 
 pygame.init()
+
+ANTI_ALIAS = 1
 class MenuItem(pygame.font.Font):
     def __init__(self, text, fontSize = 30, fontColor = (0, 0, 0),
-                 font = None, (xPos, yPos) = (0, 0)):
+                 fontName = None, (xPos, yPos) = (0, 0)):
 
 
         # ---Item Properties---
         self.text = text
-        pygame.font.Font.__init__(self, font, fontSize)
+        pygame.font.Font.__init__(self, fontName, fontSize)
 
         # ---Font Properties---
         self.fontSize = fontSize
         self.fontColor = fontColor
-        self.font = font
+        self.fontName = fontName
 
         # ---Position---
         self.xPos = xPos
@@ -26,6 +28,11 @@ class MenuItem(pygame.font.Font):
         # ---Dimensions---
         self.width = self.label.get_rect().width
         self.height = self.label.get_rect().height
+
+    def setFont(self, fontName):
+        self.fontName = fontName
+        pygame.font.Font.__init__(self, self.fontName, self.fontSize)
+        self.label = self.render(self.text, ANTI_ALIAS, self.fontColor)
 
     def setPosition(self, xPos, yPos):
         self.xPos = xPos

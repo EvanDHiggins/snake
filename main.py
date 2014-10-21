@@ -1,10 +1,10 @@
 import pygame
 import time
-import eztext
 from lib.MenuItem import MenuItem
 from mainmenu import GenericMenu
 from snake import Snake
 from ScoreDisplay import ScoreDisplay
+from textbox import TextBox
 
 pygame.init()
 
@@ -18,6 +18,7 @@ def main():
 
     scoresList, userList = readScoresFromFile()
     mainMenu = GenericMenu(screen, mainMenu)
+    mainMenu.setFont('inconsolata.otf')
     while(True):
         choice = mainMenu.run()
         if choice == 'Play Game':
@@ -36,7 +37,10 @@ def main():
 def getUsername(screen, backgroundColor):
     done = False
     clock = pygame.time.Clock()
-    textBox = eztext.Input(color = (0, 0, 0), prompt='High Score!')
+    oldWidth = screen.get_rect().width
+    oldHeight = screen.get_rect().height
+    textBox = TextBox()
+    textBox.setFont('Inconsolata.otf')
     while not done:
         clock.tick(60)
 
@@ -44,18 +48,21 @@ def getUsername(screen, backgroundColor):
 
         for event in events:
             if event.type == pygame.QUIT:
-                return
-
-        screen.fill(backgroundColor)
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    done = True
 
         textBox.update(events)
 
-        textBox.draw(screen)
+        screen.fill(backgroundColor)
+
+        textBox.render(screen)
 
         pygame.display.flip()
 
-    screen.display.set_mode((300, 375), 0, 32)
-
+    print(textBox.inputString)
 
 def displayCountdown(screen, backgroundColor):
     for i in xrange(3, 0, -1):
@@ -85,6 +92,7 @@ def readScoresFromFile():
     for item in scoresList:
         item = "{0:0>5}".format(item)
         print(item)
+    file.close()
     return scoresList, userList
 
 main()

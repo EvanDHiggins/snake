@@ -37,8 +37,6 @@ class Snake():
         # the snake
         self.acceptingMoves = True
 
-        self.textBox = TextBox()
-
         self.done = False
 
     def gameLoop(self):
@@ -86,7 +84,6 @@ class Snake():
 
             # --- Game logic goes here ---
             numberOfFood = self.updateGame(snake, food, numberOfFood)
-            self.textBox.update(events)
             
 
             # Overwrite Screen White

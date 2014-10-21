@@ -1,6 +1,7 @@
 import pygame
 from snake import Snake
 from lib.MenuItem import MenuItem
+from textbox import *
 
 pygame.init()
 

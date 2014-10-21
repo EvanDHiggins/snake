@@ -37,7 +37,6 @@ def getUsername(screen, backgroundColor):
     done = False
     clock = pygame.time.Clock()
     textBox = eztext.Input(color = (0, 0, 0), prompt='High Score!')
-    screen = pygame.display.set_mode((400, 50), 0, 32)
     while not done:
         clock.tick(60)
 
@@ -54,6 +53,8 @@ def getUsername(screen, backgroundColor):
         textBox.draw(screen)
 
         pygame.display.flip()
+
+    screen.display.set_mode((300, 375), 0, 32)
 
 
 def displayCountdown(screen, backgroundColor):

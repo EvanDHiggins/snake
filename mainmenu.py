@@ -50,11 +50,18 @@ class GenericMenu:
         while not done:
             self.clock.tick(60)
 
+            #Loops through events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     done = True
+
+                #If the mouse has left clicked
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+
+                    #Look at the items in the menu
                     for item in self.menuList:
+
+                        #If one is the selection, return its text
                         if item.isMouseSelection(pygame.mouse.get_pos()):
                             return item.text
 

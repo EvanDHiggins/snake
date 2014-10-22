@@ -8,6 +8,8 @@ from textbox import TextBox
 
 pygame.init()
 
+FONT_CHOICE = 'inconsolata.otf'
+
 def main():
     # ---Initialize Screen---
     screen = pygame.display.set_mode((300, 275), 0, 32)
@@ -16,31 +18,47 @@ def main():
     mainMenu = ('Play Game', 'High Scores', 'Settings', 'Quit')
     backgroundColor = (255, 255, 255)
 
+    settings = {'snakeLength':5, 'fontName':'inconsolata.otf',
+                'foodColor':(255,0,0)} 
+
     scoresList, userList = readScoresFromFile()
-    mainMenu = GenericMenu(screen, mainMenu)
-    mainMenu.setFont('inconsolata.otf')
+    mainMenu = GenericMenu(screen, mainMenu, fontName = settings['fontName'])
     while(True):
         choice = mainMenu.run()
         if choice == 'Play Game':
+            #Create instance of Snake.py
             snake = Snake(screen)
+
             displayCountdown(screen, backgroundColor)
+
+            #Runs game and returns player score
             newScore = snake.gameLoop()
-            getUsername(screen, backgroundColor)
-            #scoresList.append(newScore)
+
+            #Prompts user for name 
+            userName = getUsername(screen, backgroundColor, settings)
+
+            #Adds to high Scores
+            scoresList.append(newScore)
+            userList.append(userName)
+
         elif choice == 'High Scores':
-            highScores = ScoreDisplay(screen, scoresList, userList)
+            highScores = ScoreDisplay(screen, scoresList, userList,
+                            fontName = settings['fontName'])
+            #highScores.setFont(settings['fontName'])
             highScores.run()
         elif choice == 'Quit':
             break
         choice == ""
+    saveScoresToFile(scoresList, userList)
 
-def getUsername(screen, backgroundColor):
+def getUsername(screen, backgroundColor, settings):
     done = False
     clock = pygame.time.Clock()
     oldWidth = screen.get_rect().width
     oldHeight = screen.get_rect().height
-    textBox = TextBox()
-    textBox.setFont('Inconsolata.otf')
+    nameBox = TextBox()
+    nameBox.setFont(settings['fontName'])
+    screen = pygame.display.set_mode((nameBox.width, nameBox.height), 0, 32)
     while not done:
         clock.tick(60)
 
@@ -54,15 +72,16 @@ def getUsername(screen, backgroundColor):
                 if event.key == pygame.K_RETURN:
                     done = True
 
-        textBox.update(events)
+        nameBox.update(events)
 
         screen.fill(backgroundColor)
 
-        textBox.render(screen)
+        nameBox.render(screen)
 
         pygame.display.flip()
 
-    print(textBox.inputString)
+    screen = pygame.display.set_mode((oldWidth, oldHeight), 0, 32)
+    return nameBox.inputString
 
 def displayCountdown(screen, backgroundColor):
     for i in xrange(3, 0, -1):
@@ -81,19 +100,22 @@ def readScoresFromFile():
     userList = []
     scoresList = []
 
-    file = open('scores.txt', 'r')
-    for index, line in enumerate(file):
+    scoresFile = open('scores.txt', 'r')
+    for index, line in enumerate(scoresFile):
         if index % 2 == 0:
             userList.append(line)
         else:
-            scoresList.append(line)
-    for item in userList:
-        print (item)
-    for item in scoresList:
-        item = "{0:0>5}".format(item)
-        print(item)
-    file.close()
+            scoresList.append(int(line))
+    scoresFile.close()
     return scoresList, userList
+
+def saveScoresToFile(scoresList, userList):
+    scoresFile = open('scores.txt', 'w')
+    for index in range(len(scoresList)):
+        scoresFile.write(userList[index])
+        scoresFile.write(str(scoresList[index]))
+        print(str(scoresList[index]))
+    scoresFile.close()
 
 main()
 pygame.quit()

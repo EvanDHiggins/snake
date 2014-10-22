@@ -4,6 +4,39 @@ pygame.init()
 ANTI_ALIAS = 1
 
 class TextBox:
+    """
+
+    Attributes:
+        self.xPos (int): X Position in pixels of the top left corner of the 
+                    text box.
+        self.yPos (int): Y Position in pixels of the tops left corner of the
+                    text box.
+        self.position (tuple): Tuple containing (xPos, yPos) for easier access
+                    to location
+        self.fontSize (int): size of text within text box
+        self.fontColor (tuple): RGB value of text color, doesn't necessarily
+                    match border color
+        self.fontName (str): String name of font of text within box
+        self.numberOfChars (int): estimated number of characters which can fit
+                    in the text box.  This determines the width of the text
+                    box. Width is determined based off a string of this many
+                    'm' (one of the widest characters).
+        self.borderThickness (int): The thickness of the text box border in 
+                    pixels 
+        self.padding (int): number of pixels of padding between edge of
+                    characters and text box border
+        self.borderColor (tuple): RGB tuple for color of border
+        self.inputString (string): String of text displayed within text box.
+                    Changes reflect keypresses of user while textbox is present.
+        self.shifted (boolean): Reflects whether or not any keypresses by the 
+                    user will be capitalized.  This defaults to False, is set
+                    True when either right or left shift is pressed, and changes
+                    back to false when a shift is still pressed.
+        self.font (Font): pygame Font object created from the font name and the
+                    size of the desired font.  This is rendered separately
+        self.label (surface): Rendered image of text from self.font.Font object.
+                    This updates during runtime to reflect inputString.
+    """
     def __init__(self, (xPos, yPos) = (0, 0), textFieldColor = (255, 255, 255),
                  borderColor = (0, 0, 0), fontName = None, fontSize = 30,
                  fontColor = (0, 0, 0), numberOfChars = 20,
@@ -71,7 +104,6 @@ class TextBox:
         text = '[g'
         for char in xrange(characters):
             text += 'm'
-        print(text)
         text = self.font.render(text, ANTI_ALIAS, (0, 0, 0))
         return text.get_rect().width + self.padding, \
             text.get_rect().height + self.padding
@@ -149,7 +181,6 @@ def main():
         screen.fill((255, 255, 255))
         aBox.render(screen)
         pygame.display.flip()
-    print(inputString)
     pygame.quit()
 
 if __name__ == "__main__" :

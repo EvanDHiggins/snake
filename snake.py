@@ -17,7 +17,7 @@ RED = (200, 0, 0)
 #self.screenHeight = 236
 
 class Snake():
-    def __init__(self, screen):
+    def __init__(self, screen, originalLength = 5):
 
         # ---Initialize Pygame Functionality---
         self.clock = pygame.time.Clock()
@@ -30,6 +30,8 @@ class Snake():
         self.linkSize = 6
         self.linkSpacing = 4
 
+        # ---Initial Snake Features---
+        self.originalLength = originalLength
         self.score = 0
 
         # If True, pressing an arrow key will affect the snakes position
@@ -79,9 +81,6 @@ class Snake():
                             snake[0].setDirection('r')
                             self.acceptingMoves = False
 
-                    elif event.key == pygame.K_SPACE:
-                        self.addLink(snake)
-
             # --- Game logic goes here ---
             numberOfFood = self.updateGame(snake, food, numberOfFood)
             
@@ -99,19 +98,21 @@ class Snake():
             self.clock.tick(15)
 
         pygame.mouse.set_visible(True)
+        print(self.score)
         return self.score
 
-    def addLink(self, oldSnake):
+    def addLink(self, snake):
         """Adds a link to the end of the snake directly behind the last link"""
 
         #The final link of the snake in order to derive
         # the next link's location and direction
-        finalLink = oldSnake[len(oldSnake) - 1]
+        finalLink = snake[len(snake) - 1]
         newdirection = finalLink.getDirection()
         newX, newY = finalLink.getOffset()
 
-        oldSnake.append(snakeLink(newdirection, newX, newY,
+        snake.append(snakeLink(newdirection, newX, newY,
                                     self.linkSize, self.linkSpacing))
+
 
     def initializeSnake(self):
         snake = []
@@ -119,7 +120,7 @@ class Snake():
         snake.append(snakeLink('r', 50, 100, self.linkSize, self.linkSpacing))
 
         #Create 4 additional links behind head
-        for i in range(4):
+        for i in range(self.originalLength - 1):
             self.addLink(snake)
         return snake
 
@@ -195,6 +196,8 @@ class Snake():
         collisionItem = self.collision(snake, food)
         if collisionItem == "food":
             self.addLink(snake)
+            #Add points equal to number of pieces eaten
+            self.score += len(snake) - self.originalLength
             numberOfFood -= 1
         elif collisionItem == "self":
             self.done = True

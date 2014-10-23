@@ -1,0 +1,15 @@
+ - Add back button to High Scores Menu
+ - Fix snake movement
+    - If two keys are pressed in quick succession the button
+        press is largely ignored by the program.  It will
+        probably be beneficial to implement some form of 
+        queue which will read the next move each game loop
+        and only carry out that move if it is legal.  The
+        keyboard interrupts will simply be adding values to
+        this queue.
+
+ - Settings 
+    - ugh
+    - All values in the 'settings' dictionary in main.py
+        should be editable with a toggle switch or switching
+        list.

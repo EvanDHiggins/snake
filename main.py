@@ -55,7 +55,7 @@ def main():
         elif choice == 'Quit':
             break
         choice == ""
-    #saveScoresToFile(highScores)
+    saveScoresToFile(highScoreList)
 
 def getUsername(screen, backgroundColor, settings):
     done = False
@@ -124,8 +124,10 @@ def sortScores(highScoreList):
 def saveScoresToFile(highScoreList):
     scoresFile = open('scores.txt', 'w')
     for score in highScoreList:
-        scoresFile.write(score[0], '\n')
-        scoresFile.write(score[1], '\n')
+        userStr = str(score[0]) + '\n'
+        scoreStr = str(score[1]) + '\n'
+        scoresFile.write(userStr)
+        scoresFile.write(scoreStr)
     scoresFile.close()
 
 if __name__ == '__main__':

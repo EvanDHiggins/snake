@@ -1,5 +1,7 @@
- - Add back button to High Scores Menu
+ X - Add back button to High Scores Menu
  - Fix snake movement
+    - use deque object for queueing. Faster pop and append
+      functions
     - If two keys are pressed in quick succession the button
         press is largely ignored by the program.  It will
         probably be beneficial to implement some form of 

@@ -1,31 +1,22 @@
 class snakeLink:
-    def __init__(self, direction, xPosition, yPosition, linkSize, linkSpacing):
+    def __init__(self, direction, xPos, yPos, linkSize, linkSpacing):
         self.linkSize = linkSize + linkSpacing
         self.direction = direction
-        self.xPosition = xPosition
-        self.yPosition = yPosition
+        self.xPos = xPos
+        self.yPos = yPos
 
     def setDirection(self, newDirection):
         self.direction = newDirection
 
-    def getXPosition(self):
-        return self.xPosition
-
-    def getYPosition(self):
-        return self.yPosition
-
-    def getDirection(self):
-        return self.direction
-
     def getOffset(self):
         if self.direction == 'r':
-            return self.xPosition - self.linkSize, self.yPosition
+            return self.xPos - self.linkSize, self.yPos
         elif self.direction == 'l':
-            return self.xPosition + self.linkSize, self.yPosition
+            return self.xPos + self.linkSize, self.yPos
         elif self.direction == 'u':
-            return self.xPosition, self.yPosition + self.linkSize
+            return self.xPos, self.yPos + self.linkSize
         else:
-            return self.xPosition, self.yPosition - self.linkSize
+            return self.xPos, self.yPos - self.linkSize
 
     def getXOffset(self):
         """X Offset for new link generation"""
@@ -43,10 +34,10 @@ class snakeLink:
 
     def moveLink(self):
         if self.direction == 'r':
-            self.xPosition += self.linkSize
+            self.xPos += self.linkSize
         elif self.direction == 'l':
-            self.xPosition -= self.linkSize
+            self.xPos -= self.linkSize
         elif self.direction == 'u':
-            self.yPosition -= self.linkSize
+            self.yPos -= self.linkSize
         elif self.direction == 'd':
-            self.yPosition += self.linkSize
+            self.yPos += self.linkSize

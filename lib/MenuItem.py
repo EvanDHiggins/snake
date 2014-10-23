@@ -29,8 +29,8 @@ class MenuItem(pygame.font.Font):
         self.getDimensions()
 
     def getDimensions(self):
-        self.width = self.label.get_rect().width
         self.height = self.label.get_rect().height
+        self.width = self.label.get_rect().width
 
     def setFont(self, fontName):
         self.fontName = fontName

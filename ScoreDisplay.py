@@ -19,12 +19,15 @@ class ScoreDisplay:
         self.scoresOnScreen = scoresOnScreen
         self.screen = screen
         self.backgroundColor = backgroundColor
-
         self.fontName = fontName
 
+        self.backButton = MenuItem('Back', fontSize = 20, fontName = self.fontName)
+        xPos = self.screen.get_rect().width/2 - self.backButton.width/2
+        yPos = self.screen.get_rect().height - (self.backButton.height + 15)
+        self.backButton.setPosition(xPos, yPos)
         # ---Dimensions---
-        self.width = screen.get_rect().width
-        self.height = screen.get_rect().height
+        self.width = self.screen.get_rect().width
+        self.height = self.screen.get_rect().height
 
         self.createLabelLists()
 
@@ -70,14 +73,29 @@ class ScoreDisplay:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    done = True
+                    pygame.quit()
+                    quit()
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if self.backButton.isMouseSelection(pygame.mouse.get_pos()):
+                        return
 
             self.screen.fill(self.backgroundColor)
 
             for item in self.scoreLabels:
-                self.screen.blit(item.label, (item.xPos, item.yPos))
+                if not (item.yPos + item.height > self.screen.get_rect().height
+                        - self.backButton.xPos):
+                    self.screen.blit(item.label, (item.xPos, item.yPos))
 
             for item in self.userLabels:
-                self.screen.blit(item.label, (item.xPos, item.yPos))
+                if not (item.yPos + item.height > self.screen.get_rect().height
+                        - self.backButton.xPos):
+                    self.screen.blit(item.label, (item.xPos, item.yPos))
+
+            if self.backButton.isMouseSelection(pygame.mouse.get_pos()):
+                self.backButton.setFontColor((40, 100, 234)) 
+            else:
+                self.backButton.setFontColor((0, 0, 0))
+            self.screen.blit(self.backButton.label, (self.backButton.xPos,
+                             self.backButton.yPos))
 
             pygame.display.flip()

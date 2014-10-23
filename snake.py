@@ -1,6 +1,7 @@
 import sys, pygame
 import itertools
 import random
+from collections import deque
 from lib.snakeLink import snakeLink
 from lib.foodpiece import FoodPiece
 
@@ -33,6 +34,7 @@ class Snake():
         # ---Initial Snake Features---
         self.originalLength = originalLength
         self.score = 0
+        self.moveQueue = []
 
         # If True, pressing an arrow key will affect the snakes position
         #, if False, it will not.  This prevents fast key strokes killing
@@ -107,7 +109,7 @@ class Snake():
         #The final link of the snake in order to derive
         # the next link's location and direction
         finalLink = snake[len(snake) - 1]
-        newdirection = finalLink.getDirection()
+        newdirection = finalLink.direction
         newX, newY = finalLink.getOffset()
 
         snake.append(snakeLink(newdirection, newX, newY,
@@ -129,12 +131,12 @@ class Snake():
         tempSnake = snake[:]
         tempSnake.reverse()
         for link in range(0, len(tempSnake) - 1):
-            tempSnake[link].setDirection(tempSnake[link+1].getDirection())
+            tempSnake[link].setDirection(tempSnake[link+1].direction)
         self.acceptingMoves = True
         return snake
 
     def isLegalMove(self, head, move):
-        direction = head.getDirection()
+        direction = head.direction
         if direction == 'r' or direction == 'l':
             if move == 'r' or move == 'l':
                 return False
@@ -153,14 +155,14 @@ class Snake():
         :returns: String of object the snake has collided with
 
         """
-        headXPos = snake[0].getXPosition()
-        headYPos = snake[0].getYPosition()
+        headXPos = snake[0].xPos
+        headYPos = snake[0].yPos
 
         #Skips head in order to avoid comparing head position with itself
         #when determining collision with self
         for link in itertools.islice(snake, 1, len(snake) - 1):
-            linkXPos = link.getXPosition()
-            linkYPos = link.getYPosition()
+            linkXPos = link.xPos
+            linkYPos = link.yPos
             if linkXPos == headXPos and linkYPos == headYPos:
                 return "self"
         if headXPos >= self.screenWidth or headXPos < 0:
@@ -169,8 +171,8 @@ class Snake():
             return "wall"
 
         for piece in food:
-            if(piece.getXPosition() == headXPos
-                and piece.getYPosition() == headYPos):
+            if(piece.xPos == headXPos
+                and piece.yPos == headYPos):
                 food.remove(piece)
                 return "food"
 
@@ -187,7 +189,15 @@ class Snake():
         yPos = yPos - (yPos % (self.linkSize + self.linkSpacing))
         food.append(FoodPiece(xPos, yPos))
 
+    def advanceQueue(self, snake):
+        move = self.moveQueue[0]
+        if 
+
+
     def updateGame(self, snake, food, numberOfFood):
+        #Gets next move from queue
+        advanceQueue(snake)
+
         #Advances the position of each link in the snake
         for link in snake:
             link.moveLink()
@@ -213,11 +223,11 @@ class Snake():
 
     def render(self, food, snake, screen):
         for piece in food:
-            pygame.draw.rect(screen, RED, [piece.getXPosition() + 1,
-                piece.getYPosition() + 1, 4, 4])
+            pygame.draw.rect(screen, RED, [piece.xPos + 1,
+                piece.yPos + 1, 4, 4])
         for link in snake:
-            pygame.draw.rect(screen, BLACK, [link.getXPosition(),
-                        link.getYPosition(), self.linkSize, self.linkSize])
+            pygame.draw.rect(screen, BLACK, [link.xPos,
+                        link.yPos, self.linkSize, self.linkSize])
 
 
 def main():

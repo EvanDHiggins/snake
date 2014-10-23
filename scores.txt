@@ -6,6 +6,8 @@ text
 3
 Other
 3
+text
+3
 Evan
 1
 evan
@@ -15,4 +17,6 @@ blah
 text
 0
 text
+0
+t
 0

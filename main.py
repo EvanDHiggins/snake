@@ -1,5 +1,7 @@
 import pygame
 import time
+from string import *
+from operator import itemgetter
 from lib.MenuItem import MenuItem
 from mainmenu import GenericMenu
 from snake import Snake
@@ -19,9 +21,13 @@ def main():
     backgroundColor = (255, 255, 255)
 
     settings = {'snakeLength':5, 'fontName':'inconsolata.otf',
-                'foodColor':(255,0,0)} 
+                'foodColor':(255,0,0)}
 
-    scoresList, userList = readScoresFromFile()
+    #List of tuples formatted (user, score)
+    highScoreList = []
+
+    readScoresFromFile(highScoreList)
+    sortScores(highScoreList)
     mainMenu = GenericMenu(screen, mainMenu, fontName = settings['fontName'])
     while(True):
         choice = mainMenu.run()
@@ -34,22 +40,22 @@ def main():
             #Runs game and returns player score
             newScore = snake.gameLoop()
 
-            #Prompts user for name 
+            #Prompts user for name
             userName = getUsername(screen, backgroundColor, settings)
 
             #Adds to high Scores
-            scoresList.append(newScore)
-            userList.append(userName)
+            highScoreList.append((userName, newScore))
+            sortScores(highScoreList)
 
         elif choice == 'High Scores':
-            highScores = ScoreDisplay(screen, scoresList, userList,
+            highScores = ScoreDisplay(screen, highScoreList,
                             fontName = settings['fontName'])
             #highScores.setFont(settings['fontName'])
             highScores.run()
         elif choice == 'Quit':
             break
         choice == ""
-    saveScoresToFile(scoresList, userList)
+    #saveScoresToFile(highScores)
 
 def getUsername(screen, backgroundColor, settings):
     done = False
@@ -96,26 +102,32 @@ def displayCountdown(screen, backgroundColor):
         pygame.display.flip()
         time.sleep(1)
 
-def readScoresFromFile():
-    userList = []
-    scoresList = []
-
+def readScoresFromFile(highScoreList):
     scoresFile = open('scores.txt', 'r')
-    for index, line in enumerate(scoresFile):
-        if index % 2 == 0:
-            userList.append(line)
+    for line in scoresFile:
+        #Cut off the newline character from end of line
+        line = line.replace('\n', '')
+
+        #Places users and scores into list of tuples
+        if line.isdigit(): 
+            userTuple = (userName, int(line))
+            highScoreList.append(userTuple)
         else:
-            scoresList.append(int(line))
-    scoresFile.close()
-    return scoresList, userList
+            userName = line
 
-def saveScoresToFile(scoresList, userList):
+    scoresFile.close()
+
+def sortScores(highScoreList):
+    #Sorts scores in descending order
+    highScoreList.sort(key=lambda tup: tup[1], reverse=True)
+
+def saveScoresToFile(highScoreList):
     scoresFile = open('scores.txt', 'w')
-    for index in range(len(scoresList)):
-        scoresFile.write(userList[index])
-        scoresFile.write(str(scoresList[index]))
-        print(str(scoresList[index]))
+    for score in highScoreList:
+        scoresFile.write(score[0], '\n')
+        scoresFile.write(score[1], '\n')
     scoresFile.close()
 
-main()
-pygame.quit()
+if __name__ == '__main__':
+    main()
+    pygame.quit()

@@ -4,20 +4,19 @@ from lib.MenuItem import MenuItem
 pygame.init()
 
 class ScoreDisplay:
-    def __init__(self, screen, scoresList, userList, 
+    def __init__(self, screen, highScoreList, scoresOnScreen=10,
                  backgroundColor = (255, 255, 255), fontName = None):
 
         # ---Initialize Pygame Features---
         self.clock = pygame.time.Clock()
 
         # ---Lists of Strings---
-        self.scoresList = scoresList
-        self.userList = userList
+        self.highScoreList = highScoreList
 
         # ---Lists of MenuItems---
         self.scoreLabels = []
         self.userLabels = []
-
+        self.scoresOnScreen = scoresOnScreen
         self.screen = screen
         self.backgroundColor = backgroundColor
 
@@ -32,31 +31,30 @@ class ScoreDisplay:
     def createLabelLists(self):
         self.userLabels = []
         self.scoreLabels = []
-        for index, user in enumerate(self.userList):
-            itemsOnScreen = 10
-            #remove trailing \n
-            #user = user[:-1]
-            user = user.replace('\n', '')
-            if index > 9:
+        for index, scoreTuple in enumerate(self.highScoreList):
+            #First index of tuple is username, second is score
+            if index >= self.scoresOnScreen:
                 break
+            user = scoreTuple[0] 
+            score = scoreTuple[1]
+
+            user = user.replace('\n', '')
             self.userLabels.append(MenuItem(user, fontSize = 20))
             self.userLabels[index].setFont(self.fontName)
             xPos = 20
-            yPos = (index + 1) * (self.height/itemsOnScreen)
+            yPos = (index + 1) * (self.height/self.scoresOnScreen)
             self.userLabels[index].setPosition(xPos, yPos)
 
-        for index, score in enumerate(self.scoresList):
-            itemsOnScreen = 10
-            #Format to 6 columns for layout
-            score = "{0:0>6}".format(score)
+            score = "{0:0>5}".format(score)
             #remove trailing \n
             score = score.replace('\n', '')
             if index > 9:
                 break
             self.scoreLabels.append(MenuItem(score, fontSize = 20))
             self.scoreLabels[index].setFont(self.fontName)
-            xPos = self.screen.get_rect().width - 20 - self.scoreLabels[index].width 
-            yPos = (index + 1) * (self.height/itemsOnScreen)
+            xPos = (self.screen.get_rect().width - 20 - \
+                    self.scoreLabels[index].width) 
+            yPos = (index + 1) * (self.height/self.scoresOnScreen)
             self.scoreLabels[index].setPosition(xPos, yPos)
 
     def setFont(self, fontName):

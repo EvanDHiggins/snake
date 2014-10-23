@@ -60,16 +60,28 @@ class Snake():
                 # Snake Movement Handlers
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
-                        self.moveQueue.append('u')
+                        if (self.isLegalMove(snake[0], 'u') and \
+                                self.acceptingMoves == True):
+                            snake[0].setDirection('u')
+                            self.acceptingMoves = False
 
                     elif event.key == pygame.K_DOWN:
-                        self.moveQueue.append('d')
+                        if (self.isLegalMove(snake[0], 'd') and \
+                                self.acceptingMoves == True):
+                            snake[0].setDirection('d')
+                            self.acceptingMoves = False
 
                     elif event.key == pygame.K_LEFT:
-                        self.moveQueue.append('l')
+                        if (self.isLegalMove(snake[0], 'l') and \
+                                self.acceptingMoves == True):
+                            snake[0].setDirection('l')
+                            self.acceptingMoves = False
 
                     elif event.key == pygame.K_RIGHT:
-                        self.moveQueue.append('r')
+                        if (self.isLegalMove(snake[0], 'r') and \
+                                self.acceptingMoves == True):
+                            snake[0].setDirection('r')
+                            self.acceptingMoves = False
 
             # --- Game logic goes here ---
             numberOfFood = self.updateGame(snake, food, numberOfFood)
@@ -119,7 +131,7 @@ class Snake():
         tempSnake = snake[:]
         tempSnake.reverse()
         for link in range(0, len(tempSnake) - 1):
-            tempSnake[link].direction = tempSnake[link+1].direction
+            tempSnake[link].setDirection(tempSnake[link+1].direction)
         self.acceptingMoves = True
         return snake
 
@@ -180,15 +192,14 @@ class Snake():
     def advanceQueue(self, snake):
         if len(self.moveQueue) == 0:
             return
-        move = self.moveQueue.popleft()
-        if self.isLegalMove(snake[0], move):
+        move = moveQueue.popLeft()
+        if isLegalMove(snake[0], move):
             snake[0].direction = move
 
 
 
     def updateGame(self, snake, food, numberOfFood):
         #Gets next move from queue
-        self.advanceQueue(snake)
 
         #Advances the position of each link in the snake
         for link in snake:
@@ -210,6 +221,7 @@ class Snake():
             self.addFood(food)
             numberOfFood += 1
 
+        self.advanceQueue(snake)
         snake = self.nextMoves(snake)
         return numberOfFood
 

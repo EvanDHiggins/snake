@@ -81,16 +81,19 @@ class ScoreDisplay:
 
             self.screen.fill(self.backgroundColor)
 
+            #Draw the Score Labels
             for item in self.scoreLabels:
-                if not (item.yPos + item.height > self.screen.get_rect().height
-                        - self.backButton.xPos):
+                if item.yPos + item.height < self.screen.get_rect().height \
+                        - self.backButton.xPos:
                     self.screen.blit(item.label, (item.xPos, item.yPos))
 
+            #Draw the user labels
             for item in self.userLabels:
-                if not (item.yPos + item.height > self.screen.get_rect().height
-                        - self.backButton.xPos):
+                if item.yPos + item.height < self.screen.get_rect().height \
+                        - self.backButton.xPos:
                     self.screen.blit(item.label, (item.xPos, item.yPos))
 
+            #draw the back button. Color depends on mouse position
             if self.backButton.isMouseSelection(pygame.mouse.get_pos()):
                 self.backButton.setFontColor((40, 100, 234)) 
             else:

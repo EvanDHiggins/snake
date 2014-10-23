@@ -5,9 +5,6 @@ class snakeLink:
         self.xPos = xPos
         self.yPos = yPos
 
-    def setDirection(self, newDirection):
-        self.direction = newDirection
-
     def getOffset(self):
         if self.direction == 'r':
             return self.xPos - self.linkSize, self.yPos

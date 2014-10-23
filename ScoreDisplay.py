@@ -66,6 +66,9 @@ class ScoreDisplay:
 
     def run(self):
 
+        screenWidth = self.screen.get_rect().width
+        screenHeight = self.screen.get_rect().height
+
         done = False
 
         while not done:
@@ -83,14 +86,12 @@ class ScoreDisplay:
 
             #Draw the Score Labels
             for item in self.scoreLabels:
-                if item.yPos + item.height < self.screen.get_rect().height \
-                        - self.backButton.xPos:
+                if item.yPos + item.height < self.backButton.yPos:
                     self.screen.blit(item.label, (item.xPos, item.yPos))
 
             #Draw the user labels
             for item in self.userLabels:
-                if item.yPos + item.height < self.screen.get_rect().height \
-                        - self.backButton.xPos:
+                if item.yPos + item.height < self.backButton.yPos:
                     self.screen.blit(item.label, (item.xPos, item.yPos))
 
             #draw the back button. Color depends on mouse position

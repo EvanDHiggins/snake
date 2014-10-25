@@ -193,7 +193,7 @@ class TextBox:
 
         if self.backSpace == True:
             self.elapsedBackspaceTime += currentTime - self.previousTime
-            if self.elapsedBackspaceTime > .5:
+            if self.elapsedBackspaceTime > .25:
                 self.contBackspace = True
 
         if self.elapsedTime > .5:
@@ -211,7 +211,6 @@ class TextBox:
         #Create image of text for rendering
         #self.label = self.font.render(self.inputString, ANTI_ALIAS, self.fontColor)
         self.makeLabels()
-        print(self.cursorPosition)
 
         #Draw border rectangle
         pygame.draw.rect(screen, self.borderColor, [self.xPos, self.yPos,
@@ -222,7 +221,6 @@ class TextBox:
         yPos = self.textYPos
         for index in xrange(len(self.labelList)):
             if len(self.labelList) == 0 and self.displayCursor:
-                print('HELLO')
                 pygame.draw.rect(screen, self.borderColor, [xPos, yPos, 1,
                                  self.height - self.padding*2],
                                  self.borderThickness)
@@ -234,16 +232,11 @@ class TextBox:
                     self.borderThickness)
             xPos += item[1]
 
+        #Print cursor if at the left end of the textbox
         if self.cursorPosition == -1 and self.displayCursor:
             pygame.draw.rect(screen, self.borderColor, [xPos, yPos, 1,
                             self.height - self.padding*3],
                             self.borderThickness)
-        #else:
-         #   print('ELSE!')
-         #   if self.displayCursor:
-         #       pygame.draw.rect(screen, self.borderColor, [xPos, yPos, 1,
-         #                        self.height - self.padding*2],
-         #                        self.borderThickness)
         #Render text highlight
         #Render cursor
 

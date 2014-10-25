@@ -1,5 +1,5 @@
  X - Add back button to High Scores Menu
- - Fix snake movement
+ X Fix snake movement
     - use deque object for queueing. Faster pop and append
       functions
     - If two keys are pressed in quick succession the button
@@ -9,6 +9,10 @@
         and only carry out that move if it is legal.  The
         keyboard interrupts will simply be adding values to
         this queue.
+ 
+ - disallow blank names
+ - Fix up name entering screen
+ - limit textBox inputString
 
  - Settings 
     - ugh

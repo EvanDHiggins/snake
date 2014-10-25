@@ -1,4 +1,5 @@
 import pygame
+from datetime import datetime
 
 pygame.init()
 ANTI_ALIAS = 1
@@ -66,11 +67,16 @@ class TextBox:
         self.borderThickness = borderThickness
         self.padding = 3#px
         self.borderColor = borderColor
-        self.inputString = 'text'
+        self.inputString = 'Enter your name'
         self.shifted = False
+        self.backSpace = False
+        self.elapsedBackspaceTime = 0
+        self.contBackspace = False
         self.font = pygame.font.Font(self.fontName, self.fontSize)
         self.label = self.font.render(self.inputString, ANTI_ALIAS,
                                       self.fontColor)
+        self.previousTime = float(str(datetime.now())[-9:])
+        self.elapsedTime = 0
 
         #Dimensions
         self.width, self.height = self.determineDimensions(numberOfChars)
@@ -106,7 +112,7 @@ class TextBox:
             text += 'm'
         text = self.font.render(text, ANTI_ALIAS, (0, 0, 0))
         return text.get_rect().width + self.padding, \
-            text.get_rect().height + self.padding
+            text.get_rect().height + self.padding*2
 
 
     def update(self, events):
@@ -123,6 +129,10 @@ class TextBox:
                 if (event.key == pygame.K_LSHIFT or
                         event.key == pygame.K_RSHIFT):
                     self.shifted = False
+                elif event.key == pygame.K_BACKSPACE:
+                    self.backSpace = False
+                    self.contBackspace = False
+                    self.elapsedBackspaceTime = 0
             #Returns input string when return is pressed
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
@@ -143,8 +153,27 @@ class TextBox:
                         return
                 #Removes final object in array when backspace is pressed
                 elif event.key == pygame.K_BACKSPACE:
+                    self.backSpace = True
                     self.inputString = self.inputString[:-1]
 
+        currentTime = str(datetime.now())
+        currentTime = float(currentTime[-9:])
+        self.elapsedTime += currentTime - self.previousTime
+
+        if self.backSpace == True:
+            self.elapsedBackspaceTime += currentTime - self.previousTime 
+            if self.elapsedBackspaceTime > .5:
+                self.contBackspace = True
+
+        if self.elapsedTime > .5:
+            self.displayCursor = not self.displayCursor
+            self.elapsedTime = 0
+        
+        if self.contBackspace == True:
+                self.inputString = self.inputString[:-1]
+
+
+        self.previousTime = currentTime
 
     def render(self, screen):
         """function renders textbox at x/y position"""
@@ -161,6 +190,12 @@ class TextBox:
         #text = self.font.render(self.inputString, ANTI_ALIAS, self.fontColor)
         #screen.blit(self.text, self.position)
         #Render cursor
+        textWidth = self.label.get_rect().width
+        textHeight = self.label.get_rect().height
+        if self.displayCursor:
+            pygame.draw.rect(screen, self.borderColor, [self.textXPos + textWidth + 1,
+                            self.textYPos, 1, textHeight - self.padding],
+                            self.borderThickness)
 
 
 

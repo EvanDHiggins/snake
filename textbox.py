@@ -73,8 +73,10 @@ class TextBox:
         self.elapsedBackspaceTime = 0
         self.contBackspace = False
         self.font = pygame.font.Font(self.fontName, self.fontSize)
-        self.label = self.font.render(self.inputString, ANTI_ALIAS,
-                                      self.fontColor)
+        self.makeLabels()
+        #self.label = self.font.render(self.inputString, ANTI_ALIAS,
+        #                              self.fontColor)
+        self.cursorPosition = len(self.labelList)
         self.previousTime = float(str(datetime.now())[-9:])
         self.elapsedTime = 0
 
@@ -83,6 +85,14 @@ class TextBox:
 
 
         self.setPosition(xPos, yPos)
+
+    def makeLabels(self):
+        self.labelList = []
+        for char in self.inputString:
+            label = self.font.render(char, ANTI_ALIAS, self.fontColor)
+            width = label.get_rect().width
+            height = label.get_rect().height
+            self.labelList.append((label, width, height))
 
     def setPosition(self, xPos, yPos):
         self.xPos = xPos
@@ -133,6 +143,8 @@ class TextBox:
                     self.backSpace = False
                     self.contBackspace = False
                     self.elapsedBackspaceTime = 0
+                    if self.cursorPosition > 0:
+                        self.cursorPosition -= 1
             #Returns input string when return is pressed
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
@@ -147,9 +159,11 @@ class TextBox:
                 if event.key > 31 and event.key < 126:
                     if self.shifted == True:
                         self.inputString += chr(event.key).capitalize()
+                        self.cursorPosition += 1
                         return
                     elif self.shifted == False:
                         self.inputString += chr(event.key)
+                        self.cursorPosition += 1
                         return
                 #Removes final object in array when backspace is pressed
                 elif event.key == pygame.K_BACKSPACE:
@@ -178,24 +192,27 @@ class TextBox:
     def render(self, screen):
         """function renders textbox at x/y position"""
         #Create image of text for rendering
-        self.label = self.font.render(self.inputString, ANTI_ALIAS, self.fontColor)
+        #self.label = self.font.render(self.inputString, ANTI_ALIAS, self.fontColor)
+        self.makeLabels()
 
         #Draw border rectangle
         pygame.draw.rect(screen, self.borderColor, [self.xPos, self.yPos,
                          self.width, self.height], self.borderThickness)
 
         #Render text to screen
-        screen.blit(self.label, self.textPosition)
+        xPos = self.textXPos
+        yPos = self.textYPos
+        for index, item in enumerate(self.labelList):
+            screen.blit(item[0], (xPos, yPos))
+            if index+1 == self.cursorPosition:
+                pygame.draw.rect(screen, self.borderColor, [xPos + 
+                    item[0].get_rect().width, yPos, 1, item[2] - self.padding],
+                    self.borderThickness)
+            xPos += item[1]
+        #screen.blit(self.label, self.textPosition)
         #Render text highlight
-        #text = self.font.render(self.inputString, ANTI_ALIAS, self.fontColor)
-        #screen.blit(self.text, self.position)
         #Render cursor
-        textWidth = self.label.get_rect().width
-        textHeight = self.label.get_rect().height
-        if self.displayCursor:
-            pygame.draw.rect(screen, self.borderColor, [self.textXPos + textWidth + 1,
-                            self.textYPos, 1, textHeight - self.padding],
-                            self.borderThickness)
+        #if self.displayCursor:
 
 
 

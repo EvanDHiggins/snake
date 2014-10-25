@@ -11,8 +11,10 @@
         this queue.
  
  - disallow blank names
- - Fix up name entering screen
- - limit textBox inputString
+ - Pressing enter returns the "inputString" and not the string contained
+   by the arrayList of chars actually used.
+ X Fix up name entering screen
+ X limit textBox inputString
 
  - Settings 
     - ugh

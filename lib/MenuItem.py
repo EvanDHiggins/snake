@@ -53,4 +53,3 @@ class MenuItem(pygame.font.Font):
             return True
         else:
             return False
-

@@ -161,7 +161,8 @@ class TextBox:
             #Returns input string when return is pressed
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    return self.inputList
+                    self.inputString = ''.join(self.inputList)
+                    return str(self.inputString)
 
                 #Turns shift on when shift goes down
                 elif (event.key == pygame.K_LSHIFT or

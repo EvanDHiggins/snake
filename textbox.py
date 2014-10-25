@@ -232,7 +232,7 @@ class TextBox:
                                  self.borderThickness)
             item = self.labelList[index]
             screen.blit(item[0], (xPos, yPos))
-            if index == self.cursorPosition: #and self.displayCursor:
+            if index == self.cursorPosition and self.displayCursor:
                 pygame.draw.rect(screen, self.borderColor, [xPos +
                     item[0].get_rect().width, yPos, 1, item[2] - self.padding],
                     self.borderThickness)

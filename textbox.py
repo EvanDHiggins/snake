@@ -8,7 +8,7 @@ class TextBox:
     """
 
     Attributes:
-        self.xPos (int): X Position in pixels of the top left corner of the 
+        self.xPos (int): X Position in pixels of the top left corner of the
                     text box.
         self.yPos (int): Y Position in pixels of the tops left corner of the
                     text box.
@@ -22,14 +22,14 @@ class TextBox:
                     in the text box.  This determines the width of the text
                     box. Width is determined based off a string of this many
                     'm' (one of the widest characters).
-        self.borderThickness (int): The thickness of the text box border in 
-                    pixels 
+        self.borderThickness (int): The thickness of the text box border in
+                    pixels
         self.padding (int): number of pixels of padding between edge of
                     characters and text box border
         self.borderColor (tuple): RGB tuple for color of border
         self.inputString (string): String of text displayed within text box.
                     Changes reflect keypresses of user while textbox is present.
-        self.shifted (boolean): Reflects whether or not any keypresses by the 
+        self.shifted (boolean): Reflects whether or not any keypresses by the
                     user will be capitalized.  This defaults to False, is set
                     True when either right or left shift is pressed, and changes
                     back to false when a shift is still pressed.
@@ -68,6 +68,9 @@ class TextBox:
         self.padding = 3#px
         self.borderColor = borderColor
         self.inputString = 'Enter your name'
+        self.inputList = []
+        for char in self.inputString:
+            self.inputList.append(char)
         self.shifted = False
         self.backSpace = False
         self.elapsedBackspaceTime = 0
@@ -88,7 +91,7 @@ class TextBox:
 
     def makeLabels(self):
         self.labelList = []
-        for char in self.inputString:
+        for char in self.inputList:
             label = self.font.render(char, ANTI_ALIAS, self.fontColor)
             width = label.get_rect().width
             height = label.get_rect().height
@@ -124,6 +127,11 @@ class TextBox:
         return text.get_rect().width + self.padding, \
             text.get_rect().height + self.padding*2
 
+    def deleteChar(self):
+        """Removes item from inputString at cursor"""
+        if len(self.inputList) > 0:
+            self.inputList.pop(self.cursorPosition)
+
 
     def update(self, events):
         """
@@ -143,48 +151,58 @@ class TextBox:
                     self.backSpace = False
                     self.contBackspace = False
                     self.elapsedBackspaceTime = 0
-                    if self.cursorPosition > 0:
-                        self.cursorPosition -= 1
+
             #Returns input string when return is pressed
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    return self.inputString
+                    return self.inputList
 
                 #Turns shift on when shift goes down
-                if (event.key == pygame.K_LSHIFT or
+                elif (event.key == pygame.K_LSHIFT or
                         event.key == pygame.K_RSHIFT):
                     self.shifted = True
 
                 #This includes alphanumeric characters and special symbols
-                if event.key > 31 and event.key < 126:
+                elif event.key > 31 and event.key < 126:
                     if self.shifted == True:
-                        self.inputString += chr(event.key).capitalize()
+                        self.inputList.append(chr(event.key).capitalize())
                         self.cursorPosition += 1
                         return
                     elif self.shifted == False:
-                        self.inputString += chr(event.key)
+                        self.inputList.append(chr(event.key))
                         self.cursorPosition += 1
                         return
                 #Removes final object in array when backspace is pressed
                 elif event.key == pygame.K_BACKSPACE:
+                    if self.cursorPosition > 0:
+                        self.cursorPosition -= 1
+                    self.deleteChar()
                     self.backSpace = True
-                    self.inputString = self.inputString[:-1]
+
+                elif event.key == pygame.K_LEFT:
+                    if self.cursorPosition > 0:
+                        self.cursorPosition -= 1
+
+                elif event.key == pygame.K_RIGHT:
+                    if self.cursorPosition <= len(self.labelList) - 1:
+                        self.cursorPosition += 1
 
         currentTime = str(datetime.now())
         currentTime = float(currentTime[-9:])
         self.elapsedTime += currentTime - self.previousTime
 
         if self.backSpace == True:
-            self.elapsedBackspaceTime += currentTime - self.previousTime 
+            self.elapsedBackspaceTime += currentTime - self.previousTime
             if self.elapsedBackspaceTime > .5:
                 self.contBackspace = True
 
         if self.elapsedTime > .5:
             self.displayCursor = not self.displayCursor
             self.elapsedTime = 0
-        
+
         if self.contBackspace == True:
-                self.inputString = self.inputString[:-1]
+            self.deleteChar()
+            #self.inputString = self.inputString[:-1]
 
 
         self.previousTime = currentTime
@@ -204,11 +222,17 @@ class TextBox:
         yPos = self.textYPos
         for index, item in enumerate(self.labelList):
             screen.blit(item[0], (xPos, yPos))
-            if index+1 == self.cursorPosition:
-                pygame.draw.rect(screen, self.borderColor, [xPos + 
+            if index >= self.cursorPosition and self.displayCursor:
+                print(self.cursorPosition)
+                pygame.draw.rect(screen, self.borderColor, [xPos +
                     item[0].get_rect().width, yPos, 1, item[2] - self.padding],
                     self.borderThickness)
             xPos += item[1]
+        else:
+            if self.displayCursor:
+                pygame.draw.rect(screen, self.borderColor, [xPos, yPos, 1,
+                                 self.height - self.padding*2],
+                                 self.borderThickness)
         #screen.blit(self.label, self.textPosition)
         #Render text highlight
         #Render cursor

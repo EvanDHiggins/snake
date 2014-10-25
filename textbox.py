@@ -79,7 +79,7 @@ class TextBox:
         self.makeLabels()
         #self.label = self.font.render(self.inputString, ANTI_ALIAS,
         #                              self.fontColor)
-        self.cursorPosition = len(self.labelList)
+        self.cursorPosition = len(self.labelList) - 1
         self.previousTime = float(str(datetime.now())[-9:])
         self.elapsedTime = 0
 
@@ -131,7 +131,7 @@ class TextBox:
         """Removes item from inputString at cursor"""
         if len(self.inputList) > 0:
             self.inputList.pop(self.cursorPosition)
-
+            self.cursorPosition -= 1
 
     def update(self, events):
         """
@@ -165,17 +165,17 @@ class TextBox:
                 #This includes alphanumeric characters and special symbols
                 elif event.key > 31 and event.key < 126:
                     if self.shifted == True:
-                        self.inputList.append(chr(event.key).capitalize())
                         self.cursorPosition += 1
+                        self.inputList.insert(self.cursorPosition,
+                                chr(event.key).capitalize())
                         return
                     elif self.shifted == False:
-                        self.inputList.append(chr(event.key))
                         self.cursorPosition += 1
+                        self.inputList.insert(self.cursorPosition,
+                                chr(event.key))
                         return
                 #Removes final object in array when backspace is pressed
                 elif event.key == pygame.K_BACKSPACE:
-                    if self.cursorPosition > 0:
-                        self.cursorPosition -= 1
                     self.deleteChar()
                     self.backSpace = True
 
@@ -184,7 +184,7 @@ class TextBox:
                         self.cursorPosition -= 1
 
                 elif event.key == pygame.K_RIGHT:
-                    if self.cursorPosition <= len(self.labelList) - 1:
+                    if self.cursorPosition < len(self.labelList) - 1:
                         self.cursorPosition += 1
 
         currentTime = str(datetime.now())
@@ -202,7 +202,6 @@ class TextBox:
 
         if self.contBackspace == True:
             self.deleteChar()
-            #self.inputString = self.inputString[:-1]
 
 
         self.previousTime = currentTime
@@ -212,6 +211,7 @@ class TextBox:
         #Create image of text for rendering
         #self.label = self.font.render(self.inputString, ANTI_ALIAS, self.fontColor)
         self.makeLabels()
+        print(self.cursorPosition)
 
         #Draw border rectangle
         pygame.draw.rect(screen, self.borderColor, [self.xPos, self.yPos,
@@ -220,23 +220,32 @@ class TextBox:
         #Render text to screen
         xPos = self.textXPos
         yPos = self.textYPos
-        for index, item in enumerate(self.labelList):
+        for index in xrange(len(self.labelList)):
+            if len(self.labelList) == 0 and self.displayCursor:
+                print('HELLO')
+                pygame.draw.rect(screen, self.borderColor, [xPos, yPos, 1,
+                                 self.height - self.padding*2],
+                                 self.borderThickness)
+            item = self.labelList[index]
             screen.blit(item[0], (xPos, yPos))
-            if index >= self.cursorPosition and self.displayCursor:
-                print(self.cursorPosition)
+            if index == self.cursorPosition: #and self.displayCursor:
                 pygame.draw.rect(screen, self.borderColor, [xPos +
                     item[0].get_rect().width, yPos, 1, item[2] - self.padding],
                     self.borderThickness)
             xPos += item[1]
-        else:
-            if self.displayCursor:
-                pygame.draw.rect(screen, self.borderColor, [xPos, yPos, 1,
-                                 self.height - self.padding*2],
-                                 self.borderThickness)
-        #screen.blit(self.label, self.textPosition)
+
+        if self.cursorPosition == -1 and self.displayCursor:
+            pygame.draw.rect(screen, self.borderColor, [xPos, yPos, 1,
+                            self.height - self.padding*3],
+                            self.borderThickness)
+        #else:
+         #   print('ELSE!')
+         #   if self.displayCursor:
+         #       pygame.draw.rect(screen, self.borderColor, [xPos, yPos, 1,
+         #                        self.height - self.padding*2],
+         #                        self.borderThickness)
         #Render text highlight
         #Render cursor
-        #if self.displayCursor:
 
 
 

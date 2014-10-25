@@ -133,6 +133,12 @@ class TextBox:
             self.inputList.pop(self.cursorPosition)
             self.cursorPosition -= 1
 
+    def endOfBuffer(self):
+        if self.cursorPosition >= self.numberOfChars:
+            return True
+        else:
+            return False
+
     def update(self, events):
         """
             Call this method within a loop to update the contents of the
@@ -164,12 +170,12 @@ class TextBox:
 
                 #This includes alphanumeric characters and special symbols
                 elif event.key > 31 and event.key < 126:
-                    if self.shifted == True:
+                    if self.shifted == True and not self.endOfBuffer():
                         self.cursorPosition += 1
                         self.inputList.insert(self.cursorPosition,
                                 chr(event.key).capitalize())
                         return
-                    elif self.shifted == False:
+                    elif self.shifted == False and not self.endOfBuffer():
                         self.cursorPosition += 1
                         self.inputList.insert(self.cursorPosition,
                                 chr(event.key))

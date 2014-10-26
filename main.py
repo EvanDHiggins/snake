@@ -62,8 +62,7 @@ def getUsername(screen, backgroundColor, settings):
     clock = pygame.time.Clock()
     oldWidth = screen.get_rect().width
     oldHeight = screen.get_rect().height
-    nameBox = TextBox()
-    nameBox.setFont(settings['fontName'])
+    nameBox = TextBox(fontName = settings['fontName'])
     screen = pygame.display.set_mode((nameBox.width, nameBox.height), 0, 32)
     while not done:
         clock.tick(60)

@@ -129,7 +129,8 @@ class TextBox:
 
     def deleteChar(self):
         """Removes item from inputString at cursor"""
-        if len(self.inputList) > 0:
+        if len(self.inputList) > 0 and self.cursorPosition >= 0:
+            print 'pop index = ', self.cursorPosition
             self.inputList.pop(self.cursorPosition)
             self.cursorPosition -= 1
 
@@ -146,6 +147,7 @@ class TextBox:
         events - list of events created within a pygame loop with:
                  events = pygame.events.get()
         """
+        print(self.cursorPosition)
         for event in events:
 
             #Turns shift off when shift goes up
@@ -187,7 +189,7 @@ class TextBox:
                     self.backSpace = True
 
                 elif event.key == pygame.K_LEFT:
-                    if self.cursorPosition > 0:
+                    if self.cursorPosition > -1:
                         self.cursorPosition -= 1
 
                 elif event.key == pygame.K_RIGHT:
@@ -223,9 +225,15 @@ class TextBox:
         pygame.draw.rect(screen, self.borderColor, [self.xPos, self.yPos,
                          self.width, self.height], self.borderThickness)
 
-        #Render text to screen
         xPos = self.textXPos
         yPos = self.textYPos
+        #Print cursor if at the left end of the textbox
+        if self.cursorPosition == -1 and self.displayCursor:
+            pygame.draw.rect(screen, self.borderColor, [xPos, yPos, 1,
+                            self.height - self.padding*3],
+                            self.borderThickness)
+
+        #Render text to screen
         for index in xrange(len(self.labelList)):
             if len(self.labelList) == 0 and self.displayCursor:
                 pygame.draw.rect(screen, self.borderColor, [xPos, yPos, 1,
@@ -239,12 +247,7 @@ class TextBox:
                     self.borderThickness)
             xPos += item[1]
 
-        #Print cursor if at the left end of the textbox
-        if self.cursorPosition == -1 and self.displayCursor:
-            pygame.draw.rect(screen, self.borderColor, [xPos, yPos, 1,
-                            self.height - self.padding*3],
-                            self.borderThickness)
-        #Render text highlight
+                #Render text highlight
         #Render cursor
 
 

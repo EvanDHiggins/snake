@@ -90,25 +90,47 @@ class SettingsMenu:
         self.fontName = fontName
         self.fontSize = fontSize
         self.fontColor = fontColor
+        self.clock = pygame.time.Clock()
 
         self.initializeSettings()
 
     def initializeSettings(self):
         self.settingLabels = []
-        self.tempLabel = []
         for tup in self.settings:
+            self.tempLabel = []
             for index, item in enumerate(tup):
+                print 'item = ', item
                 if index == 0:
+                    print(item)
                     setting = MenuItem(item, fontName = 'inconsolata.otf')
                     self.tempLabel.append(setting)
                 else:
-                    option = MenuItem(item, fontName = 'inconsolata.otf')
+                    option = MenuItem(str(item), fontName = 'inconsolata.otf')
                     self.tempLabel.append(option)
             self.tempLabel = tuple(self.tempLabel)
             self.settingLabels.append(self.tempLabel)
 
+    def run(self):
 
+        done = False
+        xPos = 10
 
+        while not done:
+            yPos = 10
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
+            self.screen.fill(self.backgroundColor)
+        
+            for item in self.settingLabels:
+                self.screen.blit(item[0].label, (xPos, yPos))
+                yPos += 10
+
+            pygame.display.flip()
+
+            self.clock.tick(60)
 
 
 if __name__ == "__main__":

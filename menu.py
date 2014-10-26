@@ -5,7 +5,7 @@ from textbox import *
 
 pygame.init()
 
-class GenericMenu:
+class SingleColumnMenu:
     def __init__(self, screen, menuItems, backgroundColor = (255, 255, 255),
                  fontName = None, fontSize = 30, fontColor = (0, 0, 0)):
 
@@ -74,6 +74,41 @@ class GenericMenu:
                 self.screen.blit(item.label, (item.xPos, item.yPos))
 
             pygame.display.flip()
+
+class SettingsMenu:
+    def __init__(self, screen, settings, backgroundColor = (255, 255, 255),
+                 fontName = None, fontSize = 30, fontColor = (0, 0, 0)):
+
+        self.screen = screen
+        #List of tuples containing:
+        #list[0]: setting name
+        #list[1]: option 1(default)
+        #list[2]: option 2
+        #list[n]: option n
+        self.settings = settings
+        self.backgroundColor = backgroundColor
+        self.fontName = fontName
+        self.fontSize = fontSize
+        self.fontColor = fontColor
+
+        self.initializeSettings()
+
+    def initializeSettings(self):
+        self.settingLabels = []
+        self.tempLabel = []
+        for tup in self.settings:
+            for index, item in enumerate(tup):
+                if index == 0:
+                    setting = MenuItem(item, fontName = 'inconsolata.otf')
+                    self.tempLabel.append(setting)
+                else:
+                    option = MenuItem(item, fontName = 'inconsolata.otf')
+                    self.tempLabel.append(option)
+            self.tempLabel = tuple(self.tempLabel)
+            self.settingLabels.append(self.tempLabel)
+
+
+
 
 
 if __name__ == "__main__":

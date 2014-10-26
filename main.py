@@ -3,7 +3,7 @@ import time
 from string import *
 from operator import itemgetter
 from lib.MenuItem import MenuItem
-from mainmenu import GenericMenu
+from menu import *
 from snake import Snake
 from ScoreDisplay import ScoreDisplay
 from textbox import TextBox
@@ -28,7 +28,7 @@ def main():
 
     readScoresFromFile(highScoreList)
     sortScores(highScoreList)
-    mainMenu = GenericMenu(screen, mainMenu, fontName = settings['fontName'])
+    mainMenu = SingleColumnMenu(screen, mainMenu, fontName = settings['fontName'])
     while(True):
         choice = mainMenu.run()
         if choice == 'Play Game':

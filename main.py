@@ -20,16 +20,16 @@ def main():
     mainMenu = ('Play Game', 'High Scores', 'Settings', 'Quit')
     backgroundColor = (255, 255, 255)
 
-    #settings = {'snakeLength':5, 'fontName':'inconsolata.otf',
-    #            'foodColor':(255,0,0)}
-    settings = [('Snake Length', 5, 10, 15), ('Font Name', 'inconsolata.otf')]
+    settings = {'snakeLength':(5, 15, 20), 'fontName':('inconsolata.otf'),
+                'foodColor':(255,0,0)}
+    #settings = [('Snake Length', 5, 10, 15), ('Font Name', 'inconsolata.otf')]
 
     #List of tuples formatted (user, score)
     highScoreList = []
 
     readScoresFromFile(highScoreList)
     sortScores(highScoreList)
-    mainMenu = SingleColumnMenu(screen, mainMenu, fontName = settings[1][1])
+    mainMenu = SingleColumnMenu(screen, mainMenu, fontName = settings['fontName'])
     while(True):
         choice = mainMenu.run()
         if choice == 'Play Game':
@@ -50,7 +50,7 @@ def main():
 
         elif choice == 'High Scores':
             highScores = ScoreDisplay(screen, highScoreList,
-                            fontName = settings[1][1])
+                            fontName = settings['fontName'])
             highScores.run()
         elif choice == 'Settings':
             settingsMenu = SettingsMenu(screen, settings) 
@@ -65,7 +65,7 @@ def getUsername(screen, backgroundColor, settings):
     clock = pygame.time.Clock()
     oldWidth = screen.get_rect().width
     oldHeight = screen.get_rect().height
-    nameBox = TextBox(fontName = settings[1][1])
+    nameBox = TextBox(fontName = settings['fontName'])
     screen = pygame.display.set_mode((nameBox.width, nameBox.height), 0, 32)
     while not done:
         clock.tick(60)

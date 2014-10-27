@@ -2,6 +2,7 @@ import pygame
 from snake import Snake
 from lib.MenuItem import MenuItem
 from textbox import *
+from settingoption import *
 
 pygame.init()
 
@@ -80,6 +81,8 @@ class SettingsMenu:
                  fontName = None, fontSize = 30, fontColor = (0, 0, 0)):
 
         self.screen = screen
+        self.screenWidth = self.screen.get_rect().width
+        self.screenHeight = self.screen.get_rect().height
         #List of tuples containing:
         #list[0]: setting name
         #list[1]: option 1(default)
@@ -96,37 +99,22 @@ class SettingsMenu:
 
     def initializeSettings(self):
         self.settingLabels = []
-        for tup in self.settings:
-            self.tempLabel = []
-            for index, item in enumerate(tup):
-                print 'item = ', item
-                if index == 0:
-                    print(item)
-                    setting = MenuItem(item, fontName = 'inconsolata.otf')
-                    self.tempLabel.append(setting)
-                else:
-                    option = MenuItem(str(item), fontName = 'inconsolata.otf')
-                    self.tempLabel.append(option)
-            self.tempLabel = tuple(self.tempLabel)
-            self.settingLabels.append(self.tempLabel)
+        for key in self.settings:
+            self.settingLabels.append(SettingOption(key, self.settings[key],
+                                      len(self.setting[key])-1))
+
 
     def run(self):
 
         done = False
-        xPos = 10
 
         while not done:
-            yPos = 10
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
 
             self.screen.fill(self.backgroundColor)
-        
-            for item in self.settingLabels:
-                self.screen.blit(item[0].label, (xPos, yPos))
-                yPos += 10
 
             pygame.display.flip()
 
